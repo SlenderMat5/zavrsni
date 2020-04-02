@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="AI.js"></script><!--vanjski js za pametan sah??-->
+
+
+<title>Sah</title>
+<style>
+
+
+
+/*sah, ploca i tjelo*/
+
+
+.poz{
+position:absolute;
+margin:auto;
+width:auto;
+height:720px;
+z-index:-1;
+}
+
+.cont{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.gumb{
+margin:5px;
+position:relative;
+bottom:-400px;
+}
+
+#ploca{
+position:absolute;
+width:720px;
+height:720px;
+}
+
+td{width:90px;
+height:90px;
+}
+
+#id{
+text-align:center;
+}
+
+
+
+
+
+
+@media only screen and (min-width: 1088px) {		/*za uski ekran*/
+.gumb{
+position:relative;
+left:40vw;
+bottom:0;
+}
+
+}
+
+
+@media only screen and (max-height: 700px){				/*za mali ekran*/
+.poz{
+height:360px;
+}
+
+#ploca{
+width:360px;
+height:360px;
+}
+
+*{font-size:10px;}
+
+.slob{
+width:15px;
+height:15px;
+}
+
+.gumb{
+position:relative;
+bottom:-300px;
+left:0px;
+}
+}
+
+			/*sah, ploca i tjelo zavrsava*/
+			/		*ostalo*/
+
+#bt{
+display:flex;
+}
+
+.naslov{
+width:50%;
+height:auto;
+margin:0 0 0 25%;
+}
+
+*{
+font-family: "Times New Roman", Times, serif;
+color:#Fd0;
+font-size:50px;
+}
+/*ostalo zavrsava*/
+
+</style>
+
+</head>
+
+<body style="background-color:#606060;">
+
+<img src="naslov.png"; class="naslov">
+
+<!--sah, ploca itd... -->
+<div class="cont" ;="">
+<img src="ploca.png" class="poz"><!--rado bih maknuo -->
+
+<!--ploca -->
+<table id="ploca">
+</table>
+
+<!--test gumbi -->
+ <button onclick="Ref()" class="gumb">refresh</button>
+ <button onclick="Pos()" class="gumb">posalji</button>
+</div>
+<div id="bt">
+</div>
+
+
+
+
+
+
+<script>
+poz = [
+["♜","♝","♞","♚","♛","♞","♝","♜"],
+["♟","♟","♟","♟","♟","♟","♟","♟"],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+["♙","♙","♙","♙","♙","♙","♙","♙"],
+["♖","♗","♘","♕","♔","♘","♗","♖"]
+];
+ppoz = [
+["50","40","30","1000","100","30","40","50"],
+["10","10","10","10","10","10","10","10"],
+["0","0","0","0","0","0","0","0"],
+["0","0","0","0","0","0","0","0"],
+["0","0","0","0","0","0","0","0"],
+["0","0","0","0","0","0","0","0"],
+["11","11","11","11","11","11","11","11"],
+["51","41","31","101","1001","31","41","51"]
+];
+upit(ppoz);
+Iscrtaj(poz);
+
+
+function Ref(){//zrta promjene 
+Isprazni();
+Iscrtaj(this.poz);
+}
+
+function Iscrtaj(poz){
+var sad=""; //'sad' je samo sadrzaj kao td i tr, a poz su pozicije
+for(var i =0;i<poz.length;i++){
+sad+="<tr id=\"id\">";
+for(var j =0;j<poz.length;j++){
+
+if(poz[i][j] == "1"){//stavlja kruzic zamo gdje je 1
+sad+= "<td onclick=\"Print("+i+","+j+")\" id=\""+i+j+"\"><span class=\"slob\"></span></td>";
+}
+
+else{
+sad+= "<td onclick=\"Send("+i+","+j+")\" id=\""+i+j+"\">"+poz[i][j]+"</td>";
+}
+}
+sad+= "</tr>";
+}
+document.getElementById("ploca").innerHTML = sad;//sadrzaj tablice
+}
+
+function Isprazni(){//isprazni zablicu
+for(var i = 0;i<8;i++){
+var bris = document.getElementById("id");
+bris.remove();
+}
+}
+
+function Send(a, b){//ovo je testna funkcija 
+ var st="id je= "+a+", "+b;
+ var id=""+a+b+"";
+document.getElementById(id).innerHTML=st;
+
+
+//lista sa strane
+Lis(id);
+}
+
+
+var chas = " ";//nulta vrijednost za list
+var drugi = 0;//opet za lstu
+
+function Lis(id){//broken lista !!!!!!!!!!!!*smece*!!!!!!!!!!!!
+this.chas+=id+" ";
+this.drugi++;
+if(this.drugi%2 == 0){
+var spis = document.getElementById("popis");s
+var pod = document.createElement("LI");
+pod.innerHTML=this.chas;
+spis.appendChild(pod);
+this.chas=" ";
+this.drugi=0;
+}
+}
+</script>
+
+
+
+</body>
+</html>

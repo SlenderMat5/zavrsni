@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style>
+table{
+height:720px;
+width:720px;
+border-collapse:collapse;
+background-image:url(ploca.png);
+}
+td{
+width:88px;
+height:88px;
+}
+img{
+position:relative;
+bottom:1px;
+//width:84px;
+height:84px;
+}
+
+</style>
+</head>
+<body>
+<table>
+	<tr>
+		<td id="x00"><img id="xx0" src="kula-c.png"></td> <td id="x01"><img id="xx1" src="lovac-c.png"></td> <td id="x02"><img id="xx3" src="konj-c.png"></td> <td id="x03"><img id="xx4" src="kralj-c.png"></td> <td id="x04"><img id="xx5" src="kraljica-c.png"></td> <td id="x05"><img id="xx6" src="konj-c.png"></td> <td id="x06"><img id="xx7" src="lovac-c.png"></td> <td id="x07"><img id="xx8" src="kula-c.png"></td>
+	</tr>
+
+	<tr>
+		<td id="x10"><img id="xx9" src="pijun-c.png"></td> <td id="x11"><img id="xx10" src="pijun-c.png"></td> <td id="x12"><img id="xx11" src="pijun-c.png"></td> <td id="x13"><img id="xx12" src="pijun-c.png"></td> <td id="x14"><img id="xx13" src="pijun-c.png"></td> <td id="x15"><img id="xx14" src="pijun-c.png"></td> <td id="x16"><img id="xx15" src="pijun-c.png"></td> <td id="x17"><img id="xx16" src="pijun-c.png"></td>
+	</tr>
+	
+	<tr>
+		<td id="x20"></td> <td id="x21"></td> <td id="x22"></td> <td id="x23"></td> <td id="x24"></td> <td id="x25"></td> <td id="x26"></td> <td id="x27"></td>
+	</tr>
+
+	<tr>
+		<td id="x30"></td> <td id="x31"></td> <td id="x32"></td> <td id="x33"></td> <td id="x34"></td> <td id="x35"></td> <td id="x36"></td> <td id="x37"></td>
+	</tr>
+	
+	<tr>
+		<td id="x40"></td> <td id="x41"></td> <td id="x42"></td> <td id="x43"></td> <td id="x44"></td> <td id="x45"></td> <td id="x46"></td> <td id="x47"></td>
+	</tr>
+		
+	<tr>
+		<td id="x50"></td> <td id="x51"></td> <td id="x52"></td> <td id="x53"></td> <td id="x54"></td> <td id="x55"></td> <td id="x56"></td> <td id="x57"></td>
+	</tr>
+
+	<tr>
+		<td id="x60"><img id="xx25" src="pijun-b.png"></td> <td id="x61"><img id="xx26" src="pijun-b.png"></td> <td id="x62"><img id="xx27" src="pijun-b.png"></td> <td id="x63"><img id="xx28" src="pijun-b.png"></td> <td id="x64"><img id="xx29" src="pijun-b.png"></td> <td id="x65"><img id="xx30" src="pijun-b.png"></td> <td id="x66"><img id="xx31" src="pijun-b.png"></td> <td id="x67"><img id="xx32" src="pijun-b.png"></td>
+	</tr>
+	
+	<tr>
+		<td id="x70"><img id="xx17" src="kula-b.png"></td> <td id="x71"><img id="xx18" src="lovac-b.png"></td> <td id="x72"><img id="xx19" src="konj-b.png"></td> <td id="x73"><img id="xx20" src="kralj-b.png"></td> <td id="x74"><img id="xx21" src="kraljica-b.png"></td> <td id="x75"><img id="xx22" src="konj-b.png"></td> <td id="x76"><img id="xx23" src="lovac-b.png"></td> <td id="x77"><img id="xx24" src="kula-b.png"></td>
+	</tr>
+
+
+
+</table>
+
+<!--<button onclick="pomak()">pomak proto.1<button> -->
+
+<input type="txt" id="unos" value="44">
+<button onclick="Unos()">unos</button><br>
+<input type="txt" id="izb" value="44">
+<button onclick="Iznos()">izbaci</button>
+<script>
+//function pomak(){
+//var img = document.createElement("img");
+//img.src = "pijun.png"
+//img.id = "xx";
+//var src = document.getElementById("x50");
+//src.appendChild(img);
+
+//var prije = document.getElementById("xx99");
+//prije.remove("xx");
+//}
+function Unos(){
+var ulaz=document.getElementById("unos").value;
+//var ulaz="44";
+var tile = document.createElement("DIV");
+tile.innerHTML = "CLICK";
+tile.style.backgroundColor = "#F00";
+tile. style.height = "80px";
+tile.id = "xxx"+ulaz;
+var lok = document.getElementById("x"+ulaz);
+//var lok = document.getElementById("x44");
+lok.appendChild(tile);
+}
+function Iznos(){
+var izab = document.getElementById("izb").value;
+var tile = document.getElementById("xxx"+izab);
+tile.remove();
+}
+</script>
+
+</body>
+</html>

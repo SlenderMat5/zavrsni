@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="AI - Copy.js"></script><!--vanjski js za pametan sah??-->
+
+
+<title>Sah</title>
+<style>
+
+
+
+/*sah, ploca i tjelo*/
+
+
+.poz{
+position:absolute;
+margin:auto;
+width:auto;
+height:720px;
+}
+
+.cont{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.gumb{
+margin:5px;
+position:relative;
+bottom:-400px;
+}
+
+#ploca{
+position:absolute;
+width:720px;
+height:720px;
+}
+
+td{width:90px;
+height:90px;
+}
+
+#id{
+text-align:center;
+}
+
+
+@media only screen and (max-height: 700px){				/*za mali ekran*/
+.poz{
+height:360px;
+}
+
+#ploca{
+width:360px;
+height:360px;
+}
+
+*{font-size:10px;}
+
+.slob{
+width:15px;
+height:15px;
+}
+
+.gumb{
+position:relative;
+bottom:-300px;
+left:0px;
+}
+}
+
+			/*sah, ploca i tjelo zavrsava*/
+			/*ostalo*/
+.slob{
+height: 25px;
+width: 25px;
+background-color:#Fd0;
+border-radius: 50%;
+display:inline-block;
+}
+
+#bt{
+display:flex;
+}
+
+.naslov{
+width:50%;
+height:auto;
+margin:0 0 0 25%;
+}
+
+*{
+font-family: "Times New Roman", Times, serif;
+color: #ffdd00;
+font-size:50px;
+}
+/*ostalo zavrsava*/
+
+</style>
+
+</head>
+
+<body style="background-color:#606060;">
+
+<img src="naslov.png"; class="naslov">
+
+<!--sah, ploca itd... -->
+<div class="cont" ;>
+<img src="ploca.png" class="poz"><!--rado bih maknuo -->
+
+<!--ploca -->
+<table id="ploca">
+</table>
+
+<!--test gumbi -->
+</div>
+<div id="bt">
+</div>
+
+
+
+<script>
+ //-----------------------------------------------
+
+ var se_man={
+	 Px:0,
+	 Py:0
+	 }
+
+poz = [
+["♜","♝","♞","♚","♛","♞","♝","♜"],
+["♟","♟","♟","♟","♟","♟","♟","♟"],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+["♙","♙","♙","♙","♙","♙","♙","♙"],
+["♖","♗","♘","♕","♔","♘","♙","♖"]
+];
+ppoz = [
+["50","40","30","1000","100","30","40","50"],
+["10","10","10","10","10","10","10","10"],
+["0","0","0","0","0","0","0","0"],
+["0","0","0","0","0","0","0","0"],
+["0","0","0","0","0","0","0","0"],
+["0","0","0","0","0","0","0","0"],
+["11","11","11","11","11","11","11","11"],
+["51","41","31","101","1001","31","41","51"]
+];
+
+Iscrtaj(poz);
+
+fig = new Figura(poz);
+pijun = new Pijun(poz);
+kula = new Kula(poz);
+lovac = new Lovac(poz);
+konj = new Konj(poz);
+kralj = new Kralj(poz);
+kraljica = new Kraljica(poz);
+
+function Ref(){//zrta promjene 
+Isprazni();
+Iscrtaj(this.poz);
+}
+
+function tu(){
+poz = fig.ploc;
+Ref();
+}
+
+function Iscrtaj(poz){
+var sad=""; //'sad' je samo sadrzaj kao td i tr, a poz su pozicije
+for(var i =0;i<poz.length;i++){
+sad+="<tr id=\"id\">";
+for(var j =0;j<poz.length;j++){
+
+switch(poz[i][j]){
+	case "1": sad+= "<td onclick=\"cisti();moow("+i+","+j+");tu();\" id=\""+i+j+";\"><span class=\"slob\"></span></td>"; break;
+	case "♙": sad+= "<td onclick=\"cisti();pijun.select("+i+","+j+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♖":sad+= "<td onclick=\"cisti();kula.select("+i+","+j+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♗":sad+= "<td onclick=\"cisti();lovac.select("+i+","+j+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♘":sad+= "<td onclick=\"cisti();konj.select("+i+","+j+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♕":sad+= "<td onclick=\"cisti();kraljica.select("+i+","+j+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♔":sad+= "<td onclick=\"cisti();kralj.select("+i+","+j+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	default: sad+= "<td onclick=\"cisti();cisti()\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+
+}
+}
+sad+= "</tr>";
+}
+document.getElementById("ploca").innerHTML = sad;//sadrzaj tablice
+}//--------kraj crtanja-----------
+
+function Isprazni(){//isprazni zablicu
+for(var i = 0;i<8;i++){
+var bris = document.getElementById("id");
+bris.remove();
+}
+}
+
+function sel(x,y){
+	this.se_man.Px=x;
+	this.se_man.Py=y;
+
+}
+
+function cisti(){//prazni bilokakvu oznacenu figuru
+	for(var i = 0;i<8;i++){
+		for(var j = 0;j<8;j++){
+			if(this.poz[i][j]=="1")
+			this.poz[i][j]=" "
+		}
+	}
+	Ref();
+}
+
+function moow(x,y){
+	this.poz[x][y] = this.poz[this.se_man.Px][this.se_man.Py];
+	this.poz[this.se_man.Px][this.se_man.Py]=" ";
+
+
+}
+
+/***_____________dark,deep bull___________***/
+
+
+var chas = " ";//nulta vrijednost za list
+var drugi = 0;//opet za lstu
+
+function Lis(id){//broken lista !!!!!!!!!!!!*smece*!!!!!!!!!!!!
+this.chas+=id+" ";
+this.drugi++;
+if(this.drugi%2 == 0){
+var spis = document.getElementById("popis");s
+var pod = document.createElement("LI");
+pod.innerHTML=this.chas;
+spis.appendChild(pod);
+this.chas=" ";
+this.drugi=0;
+}
+}
+</script>
+
+
+
+</body>
+</html>

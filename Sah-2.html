@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="crn.js"></script><!--vanjski js za pametan sah??-->
+	<script src="bijel.js"></script><!--vanjski js za pametan sah??-->
+
+
+<title>Sah</title>
+<style>
+
+
+
+/*sah, ploca i tjelo*/
+#pozadina{
+	width:720px;
+	height:720px;
+	display: grid;
+	grid-template-columns: auto auto auto auto auto auto auto auto;
+	padding: 5px;	
+	border: #00F solid 2px;
+}
+
+
+.cont{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+
+#ploca{
+border-collapse: collapse;
+position:absolute;
+width:720px;
+height:720px;
+
+}
+
+td{width:90px;
+height:90px;
+}
+
+#id{
+text-align:center;
+font-family: "Times New Roman", Times, serif;
+color: #FFF;
+font-size:50px;
+}
+
+
+
+			/*sah, ploca i tjelo zavrsava*/
+			/*ostalo*/
+.slob{
+height: 25px;
+width: 25px;
+background-color:#F60;
+border-radius: 50%;
+display:inline-block;
+}
+
+.slobr{
+height: 25px;
+width: 25px;
+background-color:#4a2;
+border-radius: 50%;
+display:inline-block;
+}
+
+
+.naslov{
+width:50%;
+height:auto;
+margin:0 0 0 25%;
+}
+
+/*ostalo zavrsava*/
+/*za mali ekran*/
+@media only screen and (orientation: portrait) {
+#pozadina{
+	width:360px;
+	height:360px;
+}
+#id{
+font-size:25px;
+}
+.slob{
+height: 15px;
+width: 15px;
+}
+
+.slobr{
+height: 15px;
+width: 15px;
+}
+#ploca{
+width:360px;
+height:360px;
+}
+td{
+width:45px;
+height:45px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body style="background-color:#FFF;">
+
+
+<!--sah, ploca itd... -->
+<div class="cont" >
+	<div id="pozadina">
+	</div>
+
+<!--ploca -->
+<table id="ploca">
+</table>
+
+<!--test gumbi -->
+</div>
+<div id="bt">
+	<button onclick="potez();Ref();" >potez</button>
+	<button onclick="und()" >unududu</button>
+</div>
+
+
+
+<script>
+ //-----------------------------------------------
+ /*
+ se_man--> koordinati zadnje odigrane figure
+ pot--> brojpoteza
+ KiT--> istinitost o tomemože li se raditi rošada
+ ppp--> broj poteza prije nego li isteknu pp* potezi
+ poz-->stanje figura na ploci(pozadina)
+ */
+/**
+ * pp potez- potez u kojem pijun može jesti drugog pijuna sa strane nakon što je drugi pijun napravio dupli potez
+ * figura-crna figura
+ * figurab- bijela figura
+ * */
+ //-----------------------------------------------
+
+ var se_man={
+	 Px:0,
+	 Py:0
+	 }
+
+var pot=0;
+var KiT={
+	a:true,/*desna rošada*/
+	b:true/*lijeva rošada ili obrnuto*/
+};
+var ppp={
+	c:0,
+	b:0
+};/*broj poteza kako bi se znalo mže li se dogoditi pp potez*/
+
+poz = [
+["♖","♗","♘","♔","♕","♘","♗","♖"],
+["♙","♙","♙","♙","♙","♙","♙","♙"],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+["♟","♟","♟","♟","♟","♟","♟","♟"],
+["♜","♝","♞","♚","♛","♞","♝","♜"]
+];
+
+Iscrtaj(poz);/*nacrtati ce pozadinu sa inicijalnim stanjem*/
+pozadCrt();/*crta grafički polja ispod pozadine*/
+
+//inicijalizacije svake figure
+fig = new Figura(poz);
+pijun = new Pijun(poz);
+kula = new Kula(poz);
+lovac = new Lovac(poz);
+konj = new Konj(poz);
+kralj = new Kralj(poz, KiT.a, KiT.b);
+kraljica = new Kraljica(poz);
+
+figb = new Figurab(poz);
+pijunb = new Pijunb(poz);
+kulab = new Kulab(poz);
+lovacb = new Lovacb(poz);
+konjb = new Konjb(poz);
+kraljb = new Kraljb(poz, KiT.a, KiT.b);
+kraljicab = new Kraljicab(poz);
+
+function Ref(){//crta promjene 
+Isprazni();
+
+for(var i = 0;i<8;i++){
+	if (poz[7][i] == "♙") { 
+poz[7][i]="♕";
+}
+	if (poz[0][i] == "♟") { 
+poz[0][i]="♛";
+}
+}		 
+Iscrtaj(this.poz);
+}
+
+function tu(){//crta primjene za crne figure nakon što se dogodila promijena stanja ploče kaošto je novo micanje ili jedenje
+	poz = fig.ploc;
+Ref();
+}
+
+function tub(){//crta primjene za bijele figure nakon što se dogodila promijena stanja ploče kaošto je novo micanje
+	poz = figb.ploc;
+Ref();
+}
+
+function Iscrtaj(poz){// crta pozadinu iz stanja poz(adine)
+var sad=""; //'sad' je samo sadrzaj kao td i tr, a poz su pozicije
+for(var i =0;i<poz.length;i++){
+sad+="<tr id=\"id\">";/*dodaje se redak*/
+for(var j =0;j<poz.length;j++){
+
+switch(poz[i][j].substring(0,1)){/*gleda samo prviznakzato sto ako se figura moze jesi ima pred simbola "2"*/
+	case "1":  sad+= "<td onclick=\"cisti();moow("+i+","+j+");tu();brojPot();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*obično micanje na prazno polje*/
+	case "2":  sad+= "<td onclick=\"cisti();moow("+i+","+j+");tu();brojPot();\" id=\""+i+j+"\" style=\"color:#F00; \" >"+poz[i][j][1]+"</td>"; break;/*ako ovo ima figura znači da može biti pojedena||| cita samo prvi znak, a vraca figuru*/
+	case "3":  sad+= "<td onclick=\"cisti();ros("+i+","+j+");tu();\" id=\""+i+j+"\" ><span class=\"slobr\"></span></td>"; break;/*ako ovo ima figura znači da može biti pojedena||| cita samo prvi znak, a vraca figuru*/
+	case "4":  sad+= "<td onclick=\"cisti();potp();moowpp("+i+","+j+");tu();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*ovo je namjenjeno pijun pijun pokretu, dvostruki iskok pijuna*/
+	case "5":  sad+= "<td onclick=\"cisti();moowp("+i+","+j+");tu();brojPot();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*ovo je posebno jedenje pijuna u pp potezu za crnog i bijelog*/
+	case "♙": sad+= "<td onclick=\"cisti();pijun.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j].substring(0,1)+"</td>";break;/*tu je substring zato što možeimati "s" oznaku pred sobom*/
+	case "♖": sad+= "<td onclick=\"cisti();kula.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♗": sad+= "<td onclick=\"cisti();lovac.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♘": sad+= "<td onclick=\"cisti();konj.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♕": sad+= "<td onclick=\"cisti();kraljica.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♔": sad+= "<td onclick=\"cisti();kralj.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♟": sad+= "<td onclick=\"cisti();pijunb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j].substring(0,1)+"</td>";break;/*tu je substring zato što možeimati "s" oznaku pred sobom*/
+	case "♜": sad+= "<td onclick=\"cisti();kulab.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♝": sad+= "<td onclick=\"cisti();lovacb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♞": sad+= "<td onclick=\"cisti();konjb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♛": sad+= "<td onclick=\"cisti();kraljicab.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♚": sad+= "<td onclick=\"cisti();kraljb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	default: sad+= "<td onclick=\"cisti()\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+
+}
+}
+sad+= "</tr>";/*završava redak*/
+}
+document.getElementById("ploca").innerHTML = sad;//sadrzaj tablice se stavlja u tablicu
+}//--------kraj crtanja-----------
+
+
+function pozadCrt(){//crta pozadinsku sliku
+	punj=" ";
+	var b = true;
+	for(let i = 1; i < 9; ++i) {
+    	if(i%2==0){
+			for(let j = 1; j < 9; ++j) {
+				if(b){
+					punj+="<div style=\"background-color:#55F;\"></div>"
+					b=!b;
+				} 
+   				else {
+					punj+="<div style=\"background-color:#006;\"></div>"
+					b=!b;
+				}
+			}
+		}
+else{
+	for(let j = 1; j < 9; ++j) {
+				if(b){
+					punj+="<div style=\"background-color:#006;\"></div>"
+					b=!b;
+				} 
+   				else {
+					punj+="<div style=\"background-color:#55F;\"></div>"
+					b=!b;
+				}
+}
+  
+}
+document.getElementById("pozadina").innerHTML = punj;//sadrzaj tablice se stavlja u grid ispod
+}
+}
+
+
+function Isprazni(){//isprazni tablicu, briše 8 redaka
+for(var i = 0;i<8;i++){
+var bris = document.getElementById("id");
+bris.remove();
+}
+}
+
+function sel(x,y){//pamti zadnje odigranu figuru(x i y koordinatu)
+	this.se_man.Px=x;
+	this.se_man.Py=y;
+
+}
+
+function brojPot(){/*provjerava je lirosada moguca*/
+	//beli rosada provjera
+	if(poz[7][3]== " "){
+		KiT.a=false;
+		KiT.b=false;
+		kraljb = new Kraljb(poz, KiT.a, KiT.b);
+	}
+	if(poz[7][0]!= "♜"){
+		KiT.a=false;
+		kraljb = new Kraljb(poz, KiT.a, KiT.b);
+	}
+	if(poz[7][7]!= "♜"){
+		KiT.b=false;
+		kraljb = new Kraljb(poz, KiT.a, KiT.b);
+	}
+	//crni rosada provjera
+	if(poz[0][3]== " " ){
+		KiT.a=false;
+		KiT.b=false;
+		kralj = new Kralj(poz, KiT.a, KiT.b);
+	}
+	if(poz[0][0]!= "♖"){
+		KiT.a=false;
+		kralj = new Kralj(poz, KiT.a, KiT.b);
+	}
+	if(poz[0][7]!= "♖"){
+		KiT.b=false;
+		kralj = new Kralj(poz, KiT.a, KiT.b);
+	}
+
+
+}
+
+function cisti(){//prazni bilokakvu oznacenu figuru miče sve oznake kao 1,2,3,4 i 5
+	for(var i = 0;i<8;i++){
+		for(var j = 0;j<8;j++){
+			if(this.poz[i][j]=="1"){
+			this.poz[i][j]=" ";
+		}
+		if(this.poz[i][j]=="4"){
+			this.poz[i][j]=" ";
+		}
+		if(this.poz[i][j]=="3"){
+			this.poz[i][j]=" ";
+		}
+		if(this.poz[i][j]=="5"){
+			this.poz[i][j]=" ";
+		}
+			if(this.poz[i][j].substring(0,1)==2){/*mice crvenu boju s figura*/
+				this.poz[i][j]=this.poz[i][j][1];
+			}
+		}
+	}
+	Ref();
+}
+
+function moow(x,y){//pomak figure
+	poz[x][y] = poz[se_man.Px][se_man.Py];
+	poz[se_man.Px][se_man.Py]=" ";
+	potez();
+	povijest.push(x,y,se_man.Px,se_man.Py);
+
+}
+function moowp(x,y){//jedenje u stranu
+	if(x>4){
+	poz[x][y] = poz[se_man.Px][se_man.Py];
+	poz[se_man.Px][se_man.Py]=" ";
+	poz[x-1][y]=" ";
+	povijest.push(x,y,se_man.Px,se_man.Py);
+	potez();
+
+	}
+	else{
+	poz[x][y] = poz[se_man.Px][se_man.Py];
+	poz[se_man.Px][se_man.Py]=" ";
+	poz[x+1][y]=" ";
+	povijest.push(x,y,se_man.Px,se_man.Py);
+	potez();
+
+}
+}
+
+
+function potp(){/*funkcija briše sve "s" označene pijune s polovice i povecava broj poteza prine bego li isteče "s" oznaka za pijun-pijun potez*/
+
+
+	if(pot % 2 == 1){/*za crne pijune*/
+
+		for(var i = 0;i<4;i++){
+		for(var j = 0;j<8;j++){
+			if(this.poz[i][j].slice(-1)=="s"){
+				this.poz[i][j]=poz[i][j].substring(0,1);
+		}
+	}
+}
+ppp.c=2+pot;/*kada opet dodje crni na red vise nece biti oznacen "s"*/
+}
+
+
+
+	if(pot % 2 == 0){/*za bijle pijune*/
+		for(var i = 4;i<8;i++){
+		for(var j = 0;j<8;j++){
+			if(this.poz[i][j].slice(-1)=="s"){
+				this.poz[i][j]=poz[i][j].substring(0,1);	
+		}
+	}
+}
+ppp.b=2+pot;/*kada opet dodje bijeli na red vise nece biti oznacen "s"*/
+}
+
+}
+
+
+
+
+function moowpp(x,y){//dvostruki pomak pijuna u kojem se na kraju doda oznaka "s"
+	this.poz[x][y] = this.poz[this.se_man.Px][this.se_man.Py]+"s";/* "s" oznacava da pijun može biti pojeden sa strane od drugog prtivnickog pijuna*/
+	this.poz[this.se_man.Px][this.se_man.Py]=" ";
+	povijest.push(x,y,se_man.Px,se_man.Py);
+	potez();
+
+}
+
+function ros(x,y){//pomak rosade
+	if(y<4){/*za lijevu*/
+		poz[x][y]=poz[x][3];
+		poz[x][y+1]=poz[x][0];
+		poz[x][0]=" ";
+		poz[x][3]=" ";
+		potez();
+
+	}
+	else{/*i desnu stranu*/
+		poz[x][y]=poz[x][3];
+		poz[x][y-1]=poz[x][7];
+		poz[x][7]=" ";
+		poz[x][3]=" ";
+		potez();
+		}
+}
+
+function potez(){
+pot++;//inkrement poteza
+
+if(ppp.c < pot){/*provjerava vrijedi li pp potez i dalje na crnom pijunu*/
+for(var i = 0;i<4;i++){
+		for(var j = 0;j<8;j++){
+			if(this.poz[i][j].slice(-1)=="s"){/*mice pp potez s figura*/
+				this.poz[i][j]=poz[i][j].substring(0,1);
+				Ref();
+	
+			}
+		}
+	}
+	Ref();
+
+}
+
+if(ppp.b < pot){/*provjerava vrijedi li pp potez i dalje na crnom pijunu*/
+for(var i = 4;i<8;i++){
+		for(var j = 0;j<8;j++){
+			if(this.poz[i][j].slice(-1)=="s"){/*mice pp potez s figura*/
+				this.poz[i][j]=poz[i][j].substring(0,1);
+				Ref();
+	
+			}
+		}
+	}
+	Ref();
+
+
+}
+
+porvSah();
+
+	
+}
+
+var povijest =[];
+
+function und(){//undo
+	poz = [
+["♖","♗","♘","♔","♕","♘","♗","♖"],
+["♙","♙","♙","♙","♙","♙","♙","♙"],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "],
+["♟","♟","♟","♟","♟","♟","♟","♟"],
+["♜","♝","♞","♚","♛","♞","♝","♜"]
+];
+	povijest.pop();
+	povijest.pop();
+	povijest.pop();
+	povijest.pop();
+
+	for(i=0;i<povijest.length;i=i+4){
+	poz[povijest[i]][povijest[i+1]] = poz[povijest[i+2]][povijest[i+3]];
+	poz[povijest[i+2]][povijest[i+3]]=" ";
+	}
+	fig = new Figura(poz);
+pijun = new Pijun(poz);
+kula = new Kula(poz);
+lovac = new Lovac(poz);
+konj = new Konj(poz);
+kralj = new Kralj(poz, KiT.a, KiT.b);
+kraljica = new Kraljica(poz);
+figb = new Figurab(poz);
+pijunb = new Pijunb(poz);
+kulab = new Kulab(poz);
+lovacb = new Lovacb(poz);
+konjb = new Konjb(poz);
+kraljb = new Kraljb(poz, KiT.a, KiT.b);
+kraljicab = new Kraljicab(poz);
+	if(pot>0){
+	this.pot--;
+	}
+	else{
+		pot=0;
+	}
+
+	Ref();
+	console.log("gotovo");
+}
+
+function porvSah(){//detekcija saha
+	for(i=0;i<8;i++){
+		for(j=0;j<8;j++){
+		switch(poz[i][j].substring(0,1)){/*gleda samo prviznakzato sto ako se figura moze jesi ima pred simbola "2"*/
+	case "♙": pijun.select(i,j,this.pot);tu();break;
+	case "♖": kula.select(i,j,this.pot);tu();break;
+	case "♗": lovac.select(i,j,this.pot);tu();break;
+	case "♘": konj.select(i,j,this.pot);tu();break;
+	case "♕": kraljica.select(i,j,this.pot);tub();break;
+	case "♟": pijunb.select(i,j,this.pot);tub();break;
+	case "♜": kulab.select(i,j,this.pot);tub();break;
+	case "♝": lovacb.select(i,j,this.pot);tub();break;
+	case "♞": konjb.select(i,j,this.pot);tub();break;
+	case "♛": kraljicab.select(i,j,this.pot);tub();break;
+	case "♚": kraljb.select(i,j,this.pot);tub();break;
+	case "♔": kralj.select(i,j,this.pot);tu();break;
+	default: break;
+		}
+	}
+}
+
+for(i=0;i<8;i++){
+		for(j=0;j<8;j++){
+			if(poz[i][j] == "2♔" || poz[i][j] == "2♚" ){
+				//detektira šah
+			}
+		}
+	}
+
+}
+
+</script>
+
+
+
+</body>
+</html>
