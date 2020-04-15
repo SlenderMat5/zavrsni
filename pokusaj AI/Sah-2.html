@@ -5,6 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script src="crn.js"></script><!--vanjski js za pametan sah??-->
 	<script src="bijel.js"></script><!--vanjski js za pametan sah??-->
+	<script src="AI.js"></script><!--vanjski js za pametan sah??-->
 
 
 <title>Sah</title>
@@ -249,6 +250,16 @@ poz[0][i]="♛";
 Iscrtaj(this.poz);
 }
 
+function tu(){//crta primjene za crne figure nakon što se dogodila promijena stanja ploče kaošto je novo micanje ili jedenje
+	poz = fig.ploc;
+Ref();
+}
+
+function tub(){//crta primjene za bijele figure nakon što se dogodila promijena stanja ploče kaošto je novo micanje
+	poz = figb.ploc;
+Ref();
+}
+
 function Iscrtaj(poz){// crta pozadinu iz stanja poz(adine)
 var sad=""; //'sad' je samo sadrzaj kao td i tr, a poz su pozicije
 for(var i =0;i<poz.length;i++){
@@ -256,24 +267,23 @@ sad+="<tr id=\"id\">";/*dodaje se redak*/
 for(var j =0;j<poz.length;j++){
 
 switch(poz[i][j].substring(0,1)){/*gleda samo prviznakzato sto ako se figura moze jesi ima pred simbola "2"*/
-	case "1":  sad+= "<td onclick=\"cisti();moow("+i+","+j+");Ref();brojPot();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*obično micanje na prazno polje*/
-	case "2":  sad+= "<td onclick=\"cisti();moow("+i+","+j+");Ref();brojPot();\" id=\""+i+j+"\" style=\"color:#F00; \" >"+poz[i][j][1]+"</td>"; break;/*ako ovo ima figura znači da može biti pojedena||| cita samo prvi znak, a vraca figuru*/
-	case "3":  sad+= "<td onclick=\"cisti();ros("+i+","+j+");Ref();\" id=\""+i+j+"\" ><span class=\"slobr\"></span></td>"; break;/*ako ovo ima figura znači da može biti pojedena||| cita samo prvi znak, a vraca figuru*/
-	case "4":  sad+= "<td onclick=\"cisti();potp();moowpp("+i+","+j+");Ref();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*ovo je namjenjeno pijun pijun pokretu, dvostruki iskok pijuna*/
-	case "5":  sad+= "<td onclick=\"cisti();moowp("+i+","+j+");Ref();brojPot();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*ovo je posebno jedenje pijuna u pp potezu za crnog i bijelog*/
-	case "♙": sad+= "<td class=\"crni\" onclick=\"cisti();pijun.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">♟</td>";break;/*tu je substring zato što možeimati "s" oznaku pred sobom*/
-	case "♖": sad+= "<td class=\"crni\" onclick=\"cisti();kula.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">♜</td>";break;
-	case "♗": sad+= "<td class=\"crni\" onclick=\"cisti();lovac.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">♝</td>";break;
-	case "♘": sad+= "<td class=\"crni\" onclick=\"cisti();konj.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">♞</td>";break;
-	case "♕": sad+= "<td class=\"crni\" onclick=\"cisti();kraljica.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">♛</td>";break;
-	case "♔": sad+= "<td class=\"crni\" onclick=\"cisti();kralj.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">♚</td>";break;
-	case "♟": sad+= "<td class=\"bijeli\" onclick=\"cisti();pijunb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">"+poz[i][j].substring(0,1)+"</td>";break;/*tu je substring zato što možeimati "s" oznaku pred sobom*/
-	case "♜": sad+= "<td class=\"bijeli\" onclick=\"cisti();kulab.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
-	case "♝": sad+= "<td class=\"bijeli\" onclick=\"cisti();lovacb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
-	case "♞": sad+= "<td class=\"bijeli\" onclick=\"cisti();konjb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
-	case "♛": sad+= "<td class=\"bijeli\" onclick=\"cisti();kraljicab.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
-	case "♚": sad+= "<td class=\"bijeli\" onclick=\"cisti();kraljb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");Ref();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
-	default: sad+= "<td onclick=\"cisti()\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "1":  sad+= "<td onclick=\"cisti();moow("+i+","+j+");tu();brojPot();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*obično micanje na prazno polje*/
+	case "2":  sad+= "<td onclick=\"cisti();moow("+i+","+j+");tu();brojPot();\" id=\""+i+j+"\" style=\"color:#F00; \" >"+poz[i][j][1]+"</td>"; break;/*ako ovo ima figura znači da može biti pojedena||| cita samo prvi znak, a vraca figuru*/
+	case "3":  sad+= "<td onclick=\"cisti();ros("+i+","+j+");tu();\" id=\""+i+j+"\" ><span class=\"slobr\"></span></td>"; break;/*ako ovo ima figura znači da može biti pojedena||| cita samo prvi znak, a vraca figuru*/
+	case "4":  sad+= "<td onclick=\"cisti();potp();moowpp("+i+","+j+");tu();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*ovo je namjenjeno pijun pijun pokretu, dvostruki iskok pijuna*/
+	case "5":  sad+= "<td onclick=\"cisti();moowp("+i+","+j+");tu();brojPot();\" id=\""+i+j+"\"><span class=\"slob\"></span></td>"; break;/*ovo je posebno jedenje pijuna u pp potezu za crnog i bijelog*/
+	case "♙": sad+= "<td class=\"crni\" onclick=\"cisti();pijun.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">♟</td>";break;/*tu je substring zato što možeimati "s" oznaku pred sobom*/
+	case "♖": sad+= "<td class=\"crni\" onclick=\"cisti();kula.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">♜</td>";break;
+	case "♗": sad+= "<td class=\"crni\" onclick=\"cisti();lovac.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">♝</td>";break;
+	case "♘": sad+= "<td class=\"crni\" onclick=\"cisti();konj.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">♞</td>";break;
+	case "♕": sad+= "<td class=\"crni\" onclick=\"cisti();kraljica.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">♛</td>";break;
+	case "♔": sad+= "<td class=\"crni\" onclick=\"cisti();kralj.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tu();\" id=\""+i+j+"\">♚</td>";break;
+	case "♟": sad+= "<td class=\"bijeli\" onclick=\"cisti();pijunb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j].substring(0,1)+"</td>";break;/*tu je substring zato što možeimati "s" oznaku pred sobom*/
+	case "♜": sad+= "<td class=\"bijeli\" onclick=\"cisti();kulab.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♝": sad+= "<td class=\"bijeli\" onclick=\"cisti();lovacb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♞": sad+= "<td class=\"bijeli\" onclick=\"cisti();konjb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♛": sad+= "<td class=\"bijeli\" onclick=\"cisti();kraljicab.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
+	case "♚": sad+= "<td class=\"bijeli\" onclick=\"cisti();kraljb.select("+i+","+j+","+this.pot+");sel("+i+","+j+");tub();\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
 	default: sad+= "<td onclick=\"cisti()\" id=\""+i+j+"\">"+poz[i][j]+"</td>";break;
 
 }
@@ -473,9 +483,11 @@ function ros(x,y){//pomak rosade
 		}
 }
 
-function potez(){
 
+
+function potez(){
 pot++;//inkrement poteza
+cijeloStanje();
 
 if(ppp.c < pot){/*provjerava vrijedi li pp potez i dalje na crnom pijunu*/
 for(var i = 0;i<4;i++){
@@ -506,7 +518,9 @@ for(var i = 4;i<8;i++){
 
 }
 
-porvSah();
+
+
+//porvSah();
 
 	
 }
